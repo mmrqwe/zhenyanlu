@@ -24,12 +24,11 @@ body{
 
 .canvas-bg{position:fixed;inset:0;pointer-events:none;z-index:0}
 
-main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:36px;width:100%;padding:28px 16px 0}
+main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:30px;width:100%;padding:18px 16px 0}
 
-.toolbar{width:min(720px,calc(100vw - 32px));display:flex;justify-content:flex-end}
-.lang-picker{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:999px;
+.lang-picker{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:999px;
   background:#ffffff08;border:1px solid #ffffff18;backdrop-filter:blur(12px);box-shadow:0 8px 24px #00000022}
-.lang-picker span{font-size:12px;color:var(--gold-light);letter-spacing:2px}
+.lang-picker span{font-size:11px;color:var(--gold-light);letter-spacing:2px;white-space:nowrap}
 .lang-picker select{appearance:none;border:none;background:transparent;color:#fff;font-size:14px;min-width:120px;outline:none;padding-right:8px}
 .lang-picker option{background:#1b1510;color:#fff}
 
@@ -121,17 +120,25 @@ main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:
 .particle{position:fixed;pointer-events:none;z-index:99}
 .confetti{position:fixed;pointer-events:none;z-index:98}
 
-footer{position:relative;z-index:1;margin-top:40px;color:#ffffff22;font-size:12px;letter-spacing:2px;text-align:center;padding:0 16px 24px}
+.site-footer{position:relative;z-index:1;width:100%;padding:18px 16px 24px}
+.footer-bar{width:min(760px,calc(100vw - 32px));margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:12px 16px;border-radius:22px;background:#ffffff08;border:1px solid #ffffff12;backdrop-filter:blur(10px);box-shadow:0 12px 36px #00000022}
+#quoteCount{color:#ffffff55;font-size:12px;letter-spacing:2px;line-height:1.6;text-align:left;flex:1}
+.footer-bar .lang-picker{margin-left:auto;box-shadow:none;background:#0000001a;border-color:#ffffff14}
 
 @media(max-width:500px){
   :root{--card-w:240px;--card-h:340px}
-  .toolbar{width:100%;justify-content:center}
-  .lang-picker{width:min(360px,100%);justify-content:space-between}
+  main{gap:24px;padding-top:12px}
+  .lang-picker{width:min(320px,100%);justify-content:space-between}
   .lang-picker select{min-width:0;width:55%}
   .title-area h1{font-size:28px;letter-spacing:4px}
   .dc-front .qt{font-size:15px}
   .draw-btn{padding:14px 30px;font-size:16px;letter-spacing:2px}
   .draw-btn.small{padding:10px 18px;font-size:12px}
+  .site-footer{padding-top:14px;padding-bottom:20px}
+  .footer-bar{width:min(100%,360px);flex-direction:column;align-items:stretch;padding:12px 14px}
+  #quoteCount{text-align:center;font-size:11px;letter-spacing:1px}
+  .footer-bar .lang-picker{margin-left:0}
 }
 </style>
 </head>
@@ -140,13 +147,6 @@ footer{position:relative;z-index:1;margin-top:40px;color:#ffffff22;font-size:12p
 <canvas class="canvas-bg" id="bgCanvas"></canvas>
 
 <main>
-  <div class="toolbar">
-    <label class="lang-picker" for="langSelect">
-      <span id="languageLabel">语言</span>
-      <select id="langSelect" aria-label="Language"></select>
-    </label>
-  </div>
-
   <div class="title-area">
     <h1 id="heroTitle">毛 泽 东 语 录</h1>
     <div class="sub" id="heroSubtitle">迷茫时，抽一张卡片汲取力量</div>
@@ -169,7 +169,15 @@ footer{position:relative;z-index:1;margin-top:40px;color:#ffffff22;font-size:12p
   <div class="history" id="history" aria-live="polite"></div>
 </main>
 
-<footer id="quoteCount" aria-live="polite">卡片数据加载中…</footer>
+<footer class="site-footer">
+  <div class="footer-bar">
+    <div id="quoteCount" aria-live="polite">卡片数据加载中…</div>
+    <label class="lang-picker" for="langSelect">
+      <span id="languageLabel">语言</span>
+      <select id="langSelect" aria-label="Language"></select>
+    </label>
+  </div>
+</footer>
 
 <div class="explain-overlay" id="explainOverlay">
   <div class="explain-box" id="explainBox" role="dialog" aria-modal="true" aria-labelledby="explainTitle" aria-describedby="explainText">
