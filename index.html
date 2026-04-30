@@ -24,7 +24,7 @@ body{
 
 .canvas-bg{position:fixed;inset:0;pointer-events:none;z-index:0}
 
-main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:30px;width:100%;padding:18px 16px 0}
+main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:24px;width:100%;padding:18px 16px 0}
 
 .lang-picker{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:999px;
   background:#ffffff08;border:1px solid #ffffff18;backdrop-filter:blur(12px);box-shadow:0 8px 24px #00000022}
@@ -70,7 +70,7 @@ main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:
 .draw-btn:hover{transform:translateY(-3px);box-shadow:0 0 50px #d4a01755,0 8px 30px #00000088}
 .draw-btn:active{transform:translateY(0)}
 .draw-btn:disabled{opacity:.4;pointer-events:none}
-.ctrl-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
+.ctrl-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;position:relative;z-index:12}
 .draw-btn.small{padding:12px 24px;font-size:14px;letter-spacing:2px}
 
 .drawn-cards{position:fixed;inset:0;pointer-events:none;z-index:10}
@@ -111,7 +111,7 @@ main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:
   background:transparent;border:1px solid #ffffff33;color:#fff;font-size:20px;cursor:pointer;transition:all .3s;line-height:34px;text-align:center}
 .explain-box .close-btn:hover{border-color:var(--gold);color:var(--gold)}
 
-.history{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:500px;min-height:32px}
+.history{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:560px;min-height:28px}
 .history .chip{padding:6px 14px;border-radius:14px;font-size:12px;cursor:pointer;
   background:#ffffff08;border:1px solid #ffffff15;color:#aa9966;transition:all .3s;
   max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -128,7 +128,7 @@ main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:
 
 @media(max-width:500px){
   :root{--card-w:240px;--card-h:340px}
-  main{gap:24px;padding-top:12px}
+  main{gap:20px;padding-top:12px}
   .lang-picker{width:min(320px,100%);justify-content:space-between}
   .lang-picker select{min-width:0;width:55%}
   .title-area h1{font-size:28px;letter-spacing:4px}
@@ -161,9 +161,9 @@ main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:
   <div class="drawn-cards" id="drawnCards"></div>
 
   <div class="ctrl-row">
-    <button class="draw-btn small" id="drawAgainBtn" type="button">再抽一张</button>
+    <!-- <button class="draw-btn small" id="drawAgainBtn" type="button">再抽一张</button> -->
     <button class="draw-btn" id="mainBtn" type="button">抽 卡</button>
-    <button class="draw-btn small" id="drawFiveBtn" type="button">连抽五张</button>
+    <!-- <button class="draw-btn small" id="drawFiveBtn" type="button">连抽五张</button> -->
   </div>
 
   <div class="history" id="history" aria-live="polite"></div>

@@ -188,9 +188,13 @@ function applyLocale(nextLocale, { persist = false } = {}) {
   ui.heroTitle.textContent = t('heroTitle');
   ui.heroSubtitle.textContent = t('heroSubtitle');
   ui.languageLabel.textContent = t('languageLabel');
-  ui.drawAgainBtn.textContent = t('drawAgain');
+  if (ui.drawAgainBtn) {
+    ui.drawAgainBtn.textContent = t('drawAgain');
+  }
   ui.mainBtn.textContent = t('drawOne');
-  ui.drawFiveBtn.textContent = t('drawFive');
+  if (ui.drawFiveBtn) {
+    ui.drawFiveBtn.textContent = t('drawFive');
+  }
   ui.explainTitle.textContent = t('explainTitle');
   ui.closeBtn.title = t('closeLabel');
   ui.closeBtn.setAttribute('aria-label', t('closeLabel'));
@@ -301,7 +305,7 @@ function closeExplain(event) {
   activeQuoteIndex = null;
 }
 
-function multiDrawLayout(count, deckRect, actionRect) {
+function getViewportSize() {
   const viewport = window.visualViewport;
   const firstPositive = (...values) => values.find((value) => value > 0) || 0;
   const viewportWidth = firstPositive(
@@ -324,6 +328,27 @@ function multiDrawLayout(count, deckRect, actionRect) {
     screen.availHeight || 0,
     screen.height || 0
   );
+
+  return { viewportWidth, viewportHeight };
+}
+
+function singleDrawLayout(actionRect) {
+  const cardHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-h')) || 400;
+  const { viewportWidth, viewportHeight } = getViewportSize();
+  const compact = viewportWidth < 700;
+  const safeBottom = actionRect ? actionRect.top - (compact ? 30 : 38) : viewportHeight - 24;
+  const minCenterY = cardHeight / 2 + (compact ? 26 : 34);
+  const preferredCenterY = viewportHeight * (compact ? 0.43 : 0.45);
+  const centerY = Math.max(minCenterY, Math.min(preferredCenterY, safeBottom - cardHeight / 2));
+
+  return {
+    x: viewportWidth / 2,
+    y: centerY,
+  };
+}
+
+function multiDrawLayout(count, deckRect, actionRect) {
+  const { viewportWidth, viewportHeight } = getViewportSize();
   const baseWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-w')) || 280;
   const baseHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-h')) || 400;
   const ratio = baseWidth / baseHeight;
@@ -392,8 +417,10 @@ function drawOne() {
   busy = true;
   ui.mainBtn.disabled = true;
   const deckRect = ui.deck.getBoundingClientRect();
+  const actionRect = ui.mainBtn.getBoundingClientRect();
   const index = pickOne();
   const quote = getQuoteByIndex(currentLocale, index);
+  const layout = singleDrawLayout(actionRect);
 
   ui.drawnCards.querySelectorAll('.dc').forEach((card) => {
     card.style.transition = 'all .4s ease-in';
@@ -416,8 +443,8 @@ function drawOne() {
   commitAnimatedLayout(card, () => {
     card.classList.add('visible');
     card.style.transition = 'all .5s cubic-bezier(.25,.46,.45,.94)';
-    card.style.top = '50%';
-    card.style.left = '50%';
+    card.style.top = `${layout.y}px`;
+    card.style.left = `${layout.x}px`;
     card.style.transform = 'translate(-50%,-50%) scale(1)';
   });
 
@@ -591,9 +618,13 @@ function initBackgroundCanvas() {
 }
 
 function wireUi() {
-  ui.drawAgainBtn.addEventListener('click', drawOne);
+  if (ui.drawAgainBtn) {
+    ui.drawAgainBtn.addEventListener('click', drawOne);
+  }
   ui.mainBtn.addEventListener('click', drawOne);
-  ui.drawFiveBtn.addEventListener('click', drawFive);
+  if (ui.drawFiveBtn) {
+    ui.drawFiveBtn.addEventListener('click', drawFive);
+  }
   ui.explainOverlay.addEventListener('click', closeExplain);
   ui.explainBox.addEventListener('click', (event) => event.stopPropagation());
   ui.closeBtn.addEventListener('click', closeExplain);
