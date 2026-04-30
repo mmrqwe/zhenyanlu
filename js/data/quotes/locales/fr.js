@@ -973,6 +973,31 @@ const fr = [
     "q": "La force centrale qui mène notre cause est le Parti communiste chinois, et la base théorique qui guide notre réflexion est le marxisme-léninisme.",
     "s": "« Discours d'ouverture de la première session de la première Assemblée populaire nationale de la République populaire de Chine » (septembre 1954)",
     "e": "Cette phrase résume l’essentiel de l’orientation politique de la Chine nouvelle : quelle force doit être utilisée pour diriger la cause et quelle théorie doit être utilisée comme base idéologique."
+  },
+  {
+    "q": "Tout ce que l'ennemi combat, nous devons le soutenir ; tout ce que l'ennemi soutient, nous devons le combattre",
+    "s": "« Entretien avec trois journalistes de l'Agence centrale, du Sao Tang Pao et du Hsin Min Pao » (septembre 1939)",
+    "e": "C'est un critère simple pour distinguer l'ami de l'ennemi. Sur les questions de principe fondamental, l'attitude de l'ennemi devient une coordonnée inversée qui aide à confirmer notre propre position."
+  },
+  {
+    "q": "Nous devons avoir foi dans les masses et nous devons avoir foi dans le Parti : ce sont deux principes fondamentaux",
+    "s": "« Sur la question de la coopération agricole » (juillet 1955)",
+    "e": "Dans les grandes décisions, la confiance dans les masses est la source de la force, et la confiance dans le Parti est la garantie organisationnelle. Aucune des deux ne peut manquer ; ce sont les prémisses de tout travail."
+  },
+  {
+    "q": "Une personne doit avoir un peu d'esprit",
+    "s": "« Discours à la Conférence nationale du Parti communiste chinois » (mars 1955)",
+    "e": "Au-delà des conditions matérielles, ce dont l'homme ne peut le moins se passer, c'est d'un certain état d'esprit. Dans la prospérité comme dans l'adversité, tant que cet esprit demeure, on peut continuer à avancer."
+  },
+  {
+    "q": "La guerre révolutionnaire est une guerre des masses ; elle ne peut être menée qu'en mobilisant les masses et en s'appuyant sur elles",
+    "s": "« Soyez attentifs à la vie des masses et aux méthodes de travail » (janvier 1934)",
+    "e": "Le fondement de la victoire dans la guerre réside dans les masses. Pour vaincre, il faut véritablement les mobiliser, les organiser et s'appuyer sur elles ; sans les masses, rien n'est possible."
+  },
+  {
+    "q": "Le travail politique est la ligne de vie de tout travail économique",
+    "s": "Note de l'éditeur à « Une leçon grave » (« La marée socialiste dans les campagnes chinoises », décembre 1955)",
+    "e": "Sans une orientation politique correcte, le travail économique perd son âme. Les deux ne s'opposent pas : c'est précisément le travail politique qui permet au travail économique d'aller loin et de rester sur la bonne voie."
   }
 ];
 

@@ -973,6 +973,31 @@ const en = [
     "q": "The core force leading our cause is the Communist Party of China, and the theoretical basis guiding our thinking is Marxism-Leninism",
     "s": "\"Opening Speech of the First Session of the First National People's Congress of the People's Republic of China\" (September 1954)",
     "e": "This sentence summarizes the core of the political direction of New China: what force should be used to lead the cause, and what theory should be used as the ideological basis."
+  },
+  {
+    "q": "Whatever the enemy opposes, we must support; whatever the enemy supports, we must oppose",
+    "s": "\"Interview with Three Correspondents from the Central News Agency, the Sao Tang Pao and the Hsin Min Pao\" (September 1939)",
+    "e": "This is a simple criterion for judging friend from foe. On matters of fundamental principle, the enemy's attitude itself becomes a reverse coordinate that helps us confirm our own position."
+  },
+  {
+    "q": "We must have faith in the masses and we must have faith in the Party. These are two cardinal principles",
+    "s": "\"On the Question of Agricultural Co-operation\" (July 1955)",
+    "e": "In major decisions, faith in the masses is the source of strength, and faith in the Party is the organizational guarantee. Neither can be lacking; they are the basic premise for all work."
+  },
+  {
+    "q": "A person needs to have a little spirit",
+    "s": "\"Speech at the National Conference of the Communist Party of China\" (March 1955)",
+    "e": "Beyond material conditions, what people most cannot do without is a certain spiritual state. In good times or bad, as long as this spirit remains, things can still be carried forward."
+  },
+  {
+    "q": "Revolutionary war is a war of the masses; it can be waged only by mobilizing the masses and relying on them",
+    "s": "\"Be Concerned with the Well-Being of the Masses, Pay Attention to Methods of Work\" (January 1934)",
+    "e": "The foundation of victory in war lies with the masses. To win battles, the masses must be truly mobilized, organized and relied upon; without the masses, nothing can be done."
+  },
+  {
+    "q": "Political work is the lifeblood of all economic work",
+    "s": "Editor's note to \"A Serious Lesson\" (\"Socialist Upsurge in China's Countryside\", December 1955)",
+    "e": "Without correct political direction, economic work loses its soul. The two are not opposed: political work is precisely what allows economic work to go far and stay on the right path."
   }
 ];
 

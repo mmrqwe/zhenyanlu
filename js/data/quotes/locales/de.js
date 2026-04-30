@@ -973,6 +973,31 @@ const de = [
     "q": "Die zentrale Kraft, die unsere Sache anführt, ist die Kommunistische Partei Chinas, und die theoretische Grundlage, die unser Denken leitet, ist der Marxismus-Leninismus",
     "s": "„Eröffnungsrede der ersten Sitzung des Ersten Nationalen Volkskongresses der Volksrepublik China“ (September 1954)",
     "e": "Dieser Satz fasst den Kern der politischen Ausrichtung des Neuen China zusammen: Welche Kraft sollte zur Führung der Sache eingesetzt werden und welche Theorie sollte als ideologische Grundlage dienen."
+  },
+  {
+    "q": "Was immer der Feind bekämpft, müssen wir unterstützen; was immer der Feind unterstützt, müssen wir bekämpfen",
+    "s": "„Gespräch mit drei Journalisten der Zentralen Nachrichtenagentur, der Sao Tang Pao und der Hsin Min Pao“ (September 1939)",
+    "e": "Dies ist ein einfacher Maßstab, um Freund und Feind zu unterscheiden. In grundlegenden Fragen wird die Haltung des Feindes selbst zur umgekehrten Koordinate, die hilft, die eigene Position zu bestätigen."
+  },
+  {
+    "q": "Wir müssen den Massen vertrauen und wir müssen der Partei vertrauen – das sind zwei Grundprinzipien",
+    "s": "„Über die Frage der landwirtschaftlichen Genossenschaftsbewegung“ (Juli 1955)",
+    "e": "Bei großen Entscheidungen ist das Vertrauen in die Massen die Quelle der Kraft und das Vertrauen in die Partei die organisatorische Garantie. Keines darf fehlen; sie sind die Grundvoraussetzung jeder Arbeit."
+  },
+  {
+    "q": "Ein Mensch muss etwas Geist besitzen",
+    "s": "„Rede auf der Nationalen Konferenz der Kommunistischen Partei Chinas“ (März 1955)",
+    "e": "Über die materiellen Bedingungen hinaus kann der Mensch am wenigsten auf einen bestimmten geistigen Zustand verzichten. Ob in guten oder schlechten Zeiten – solange dieser Geist bleibt, lassen sich Dinge fortführen."
+  },
+  {
+    "q": "Der revolutionäre Krieg ist ein Krieg der Massen; er kann nur geführt werden, indem man die Massen mobilisiert und sich auf sie stützt",
+    "s": "„Sorge dich um das Leben der Massen, achte auf die Methoden der Arbeit“ (Januar 1934)",
+    "e": "Die Grundlage des Sieges im Krieg liegt bei den Massen. Um zu siegen, müssen sie wirklich mobilisiert, organisiert und herangezogen werden; ohne die Massen ist nichts möglich."
+  },
+  {
+    "q": "Die politische Arbeit ist die Lebensader aller wirtschaftlichen Arbeit",
+    "s": "Anmerkung der Redaktion zu „Eine schwere Lehre“ („Sozialistischer Aufschwung im chinesischen Dorf“, Dezember 1955)",
+    "e": "Ohne eine richtige politische Orientierung verliert die wirtschaftliche Arbeit ihre Seele. Beide stehen sich nicht entgegen: Gerade die politische Arbeit ermöglicht es der wirtschaftlichen Arbeit, weit zu gehen und auf dem rechten Weg zu bleiben."
   }
 ];
 
