@@ -1,23 +1,28 @@
-import zhHans from './locales/zh-Hans.js';
-import zhHant from './locales/zh-Hant.js';
-import en from './locales/en.js';
-import ja from './locales/ja.js';
-import ko from './locales/ko.js';
-import fr from './locales/fr.js';
-import de from './locales/de.js';
-
 const STORAGE_KEY = 'mzd-quote-locale';
 const DEFAULT_LOCALE = 'en';
 
-const LOCALES = {
-  'zh-Hans': zhHans,
-  'zh-Hant': zhHant,
-  en,
-  ja,
-  ko,
-  fr,
-  de,
+const SUPPORTED_LOCALES = [
+  { code: 'zh-Hans', nativeName: '简体中文' },
+  { code: 'zh-Hant', nativeName: '繁體中文' },
+  { code: 'en', nativeName: 'English' },
+  { code: 'ja', nativeName: '日本語' },
+  { code: 'ko', nativeName: '한국어' },
+  { code: 'fr', nativeName: 'Français' },
+  { code: 'de', nativeName: 'Deutsch' },
+];
+
+const LOCALE_LOADERS = {
+  'zh-Hans': () => import('./locales/zh-Hans.js'),
+  'zh-Hant': () => import('./locales/zh-Hant.js'),
+  en: () => import('./locales/en.js'),
+  ja: () => import('./locales/ja.js'),
+  ko: () => import('./locales/ko.js'),
+  fr: () => import('./locales/fr.js'),
+  de: () => import('./locales/de.js'),
 };
+
+const loadedLocales = new Map();
+const loadingLocales = new Map();
 
 const LANGUAGE_ALIASES = {
   en: 'en',
@@ -97,15 +102,43 @@ export function normalizeLocale(input) {
 }
 
 export function getSupportedLocales() {
-  return Object.values(LOCALES).map(({ code, nativeName }) => ({
-    code,
-    nativeName,
-  }));
+  return SUPPORTED_LOCALES.map(({ code, nativeName }) => ({ code, nativeName }));
 }
 
 export function getMessages(localeCode) {
   const normalized = normalizeLocale(localeCode) || DEFAULT_LOCALE;
-  return LOCALES[normalized] || LOCALES[DEFAULT_LOCALE];
+  return loadedLocales.get(normalized) || loadedLocales.get(DEFAULT_LOCALE) || null;
+}
+
+export async function ensureMessages(localeCode) {
+  const normalized = normalizeLocale(localeCode) || DEFAULT_LOCALE;
+
+  if (loadedLocales.has(normalized)) {
+    return loadedLocales.get(normalized);
+  }
+
+  if (!loadingLocales.has(normalized)) {
+    const load = LOCALE_LOADERS[normalized] || LOCALE_LOADERS[DEFAULT_LOCALE];
+    const pending = load()
+      .then((module) => {
+        loadedLocales.set(normalized, module.default);
+        return module.default;
+      })
+      .finally(() => {
+        loadingLocales.delete(normalized);
+      });
+
+    loadingLocales.set(normalized, pending);
+  }
+
+  try {
+    return await loadingLocales.get(normalized);
+  } catch (error) {
+    if (normalized !== DEFAULT_LOCALE) {
+      return ensureMessages(DEFAULT_LOCALE);
+    }
+    throw error;
+  }
 }
 
 export function translate(messages, key, params = {}) {

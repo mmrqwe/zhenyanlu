@@ -1,8 +1,15 @@
-import { getQuoteByIndex, getQuoteCount, getQuoteSummary } from './data/quotes.js';
+import {
+  ensureQuoteLocale,
+  getQuoteByIndex,
+  getQuoteCount,
+  getQuoteSummary,
+} from './data/quotes.js';
 import {
   detectLocale,
+  ensureMessages,
   getMessages,
   getSupportedLocales,
+  normalizeLocale,
   saveLocale,
   translate,
 } from './i18n/index.js';
@@ -35,10 +42,13 @@ const SILHOUETTE_SRC = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(SI
 const ui = {};
 
 let busy = false;
+let localeLoading = false;
 let currentLocale = detectLocale();
-let messages = getMessages(currentLocale);
+let messages = null;
 let recentDraws = [];
 let activeQuoteIndex = null;
+let allQuoteIndices = [];
+let localeRequestToken = 0;
 
 const CARD_DIMENSIONS = {
   default: { width: 280, height: 400 },
@@ -49,10 +59,8 @@ const CARD_DIMENSIONS = {
 const BALANCED_CARD_LOCALES = new Set(['ja', 'ko']);
 const SPACIOUS_CARD_LOCALES = new Set(['en', 'fr', 'de']);
 
-const ALL_QUOTE_INDICES = Array.from({ length: getQuoteCount() }, (_, index) => index);
-
 function t(key, params) {
-  return translate(messages, key, params);
+  return messages ? translate(messages, key, params) : key;
 }
 
 function escapeHtml(value) {
@@ -124,6 +132,23 @@ function renderLanguageOptions() {
     .join('');
 }
 
+function syncActionState() {
+  const disabled = busy || localeLoading;
+
+  if (ui.mainBtn) {
+    ui.mainBtn.disabled = disabled;
+  }
+  if (ui.drawAgainBtn) {
+    ui.drawAgainBtn.disabled = disabled;
+  }
+  if (ui.drawFiveBtn) {
+    ui.drawFiveBtn.disabled = disabled;
+  }
+  if (ui.langSelect) {
+    ui.langSelect.disabled = localeLoading;
+  }
+}
+
 function applyCardDimensions() {
   let dimensions = CARD_DIMENSIONS.default;
 
@@ -178,53 +203,76 @@ function getExplanationText(quoteData) {
   return quoteData.e || t('defaultExplanation');
 }
 
-function applyLocale(nextLocale, { persist = false } = {}) {
-  currentLocale = nextLocale;
-  messages = getMessages(currentLocale);
+async function applyLocale(nextLocale, { persist = false } = {}) {
+  const normalizedLocale = normalizeLocale(nextLocale) || currentLocale;
+  const requestToken = ++localeRequestToken;
 
-  document.documentElement.lang = messages.htmlLang || currentLocale;
-  applyCardDimensions();
-  document.title = t('pageTitle');
-  ui.heroTitle.textContent = t('heroTitle');
-  ui.heroSubtitle.textContent = t('heroSubtitle');
-  ui.languageLabel.textContent = t('languageLabel');
-  if (ui.drawAgainBtn) {
-    ui.drawAgainBtn.textContent = t('drawAgain');
-  }
-  ui.mainBtn.textContent = t('drawOne');
-  if (ui.drawFiveBtn) {
-    ui.drawFiveBtn.textContent = t('drawFive');
-  }
-  ui.explainTitle.textContent = t('explainTitle');
-  ui.closeBtn.title = t('closeLabel');
-  ui.closeBtn.setAttribute('aria-label', t('closeLabel'));
-  ui.langSelect.value = messages.code;
-  ui.langSelect.setAttribute('aria-label', t('languageLabel'));
-  ui.history.setAttribute('aria-label', t('historyLabel'));
+  localeLoading = true;
+  syncActionState();
 
-  updateStaticDeckText();
-  updateDrawnCardsText();
-  fillPortraitSlots();
-  updateQuoteCount();
-  updateHistory();
+  try {
+    await Promise.all([
+      ensureMessages(normalizedLocale),
+      ensureQuoteLocale(normalizedLocale),
+    ]);
 
-  if (activeQuoteIndex !== null) {
-    const activeQuote = getQuoteByIndex(currentLocale, activeQuoteIndex);
-    if (activeQuote) {
-      ui.explainQuote.textContent = activeQuote.q;
-      ui.explainText.textContent = getExplanationText(activeQuote);
+    if (requestToken !== localeRequestToken) {
+      return;
     }
-  }
 
-  if (persist) {
-    saveLocale(messages.code);
+    currentLocale = normalizedLocale;
+    messages = getMessages(currentLocale);
+    allQuoteIndices = Array.from({ length: getQuoteCount() }, (_, index) => index);
+
+    document.documentElement.lang = messages.htmlLang || currentLocale;
+    applyCardDimensions();
+    document.title = t('pageTitle');
+    ui.heroTitle.textContent = t('heroTitle');
+    ui.heroSubtitle.textContent = t('heroSubtitle');
+    ui.languageLabel.textContent = t('languageLabel');
+    if (ui.drawAgainBtn) {
+      ui.drawAgainBtn.textContent = t('drawAgain');
+    }
+    ui.mainBtn.textContent = t('drawOne');
+    if (ui.drawFiveBtn) {
+      ui.drawFiveBtn.textContent = t('drawFive');
+    }
+    ui.explainTitle.textContent = t('explainTitle');
+    ui.closeBtn.title = t('closeLabel');
+    ui.closeBtn.setAttribute('aria-label', t('closeLabel'));
+    ui.langSelect.value = messages.code;
+    ui.langSelect.setAttribute('aria-label', t('languageLabel'));
+    ui.history.setAttribute('aria-label', t('historyLabel'));
+
+    updateStaticDeckText();
+    updateDrawnCardsText();
+    fillPortraitSlots();
+    updateQuoteCount();
+    updateHistory();
+
+    if (activeQuoteIndex !== null) {
+      const activeQuote = getQuoteByIndex(currentLocale, activeQuoteIndex);
+      if (activeQuote) {
+        ui.explainQuote.textContent = activeQuote.q;
+        ui.explainText.textContent = getExplanationText(activeQuote);
+      }
+    }
+
+    if (persist) {
+      saveLocale(messages.code);
+    }
+  } finally {
+    if (requestToken === localeRequestToken) {
+      localeLoading = false;
+      syncActionState();
+    }
   }
 }
 
 function pickOne() {
   const recentSet = new Set(recentDraws.slice(-10));
-  const candidates = ALL_QUOTE_INDICES.filter((index) => !recentSet.has(index));
-  const pool = candidates.length ? candidates : ALL_QUOTE_INDICES;
+  const candidates = allQuoteIndices.filter((index) => !recentSet.has(index));
+  const pool = candidates.length ? candidates : allQuoteIndices;
   const pickedIndex = pool[Math.floor(Math.random() * pool.length)];
   recentDraws.push(pickedIndex);
   if (recentDraws.length > 50) {
@@ -410,12 +458,12 @@ function commitAnimatedLayout(element, applyFinalState) {
 }
 
 function drawOne() {
-  if (busy) {
+  if (busy || localeLoading) {
     return;
   }
 
   busy = true;
-  ui.mainBtn.disabled = true;
+  syncActionState();
   const deckRect = ui.deck.getBoundingClientRect();
   const actionRect = ui.mainBtn.getBoundingClientRect();
   const index = pickOne();
@@ -456,18 +504,18 @@ function drawOne() {
   setTimeout(() => {
     ui.deck.style.transition = 'opacity .6s .3s';
     ui.deck.style.opacity = '1';
-    ui.mainBtn.disabled = false;
     busy = false;
+    syncActionState();
   }, 1400);
 }
 
 function drawFive() {
-  if (busy) {
+  if (busy || localeLoading) {
     return;
   }
 
   busy = true;
-  ui.mainBtn.disabled = true;
+  syncActionState();
   const deckRect = ui.deck.getBoundingClientRect();
   const actionRect = ui.mainBtn.getBoundingClientRect();
 
@@ -522,8 +570,8 @@ function drawFive() {
   setTimeout(() => {
     ui.deck.style.transition = 'opacity .6s .3s';
     ui.deck.style.opacity = '1';
-    ui.mainBtn.disabled = false;
     busy = false;
+    syncActionState();
   }, 3200);
 }
 
@@ -629,7 +677,9 @@ function wireUi() {
   ui.explainBox.addEventListener('click', (event) => event.stopPropagation());
   ui.closeBtn.addEventListener('click', closeExplain);
   ui.langSelect.addEventListener('change', (event) => {
-    applyLocale(event.target.value, { persist: true });
+    void applyLocale(event.target.value, { persist: true }).catch((error) => {
+      console.error('Failed to switch locale resources.', error);
+    });
   });
 
   document.addEventListener('keydown', (event) => {
@@ -639,14 +689,19 @@ function wireUi() {
   });
 }
 
-function init() {
+async function init() {
   cacheUi();
   injectDynamicKeyframes();
   renderLanguageOptions();
   wireUi();
   ui.explainOverlay.setAttribute('aria-hidden', 'true');
-  applyLocale(currentLocale);
+  syncActionState();
+  await applyLocale(currentLocale);
   initBackgroundCanvas();
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+  void init().catch((error) => {
+    console.error('Failed to initialize app.', error);
+  });
+});
