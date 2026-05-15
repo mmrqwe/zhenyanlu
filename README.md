@@ -23,7 +23,7 @@
 
 ## 本地运行
 
-这是一个原生 HTML + CSS + JavaScript 项目，直接部署为静态站点即可。
+这是一个原生 HTML + CSS + JavaScript 项目，不需要 npm，也不需要任何构建步骤，直接部署源目录中的静态文件即可。
 
 开发时可直接使用任意静态服务器运行源目录：
 
@@ -37,26 +37,18 @@ python -m http.server 8000
 http://localhost:8000
 ```
 
-生产发布建议走最小构建流程：
+生产发布时，将仓库根目录中的这些内容直接作为站点文件发布即可：
 
-```bash
-npm install
-npm run build
-npm run preview
-```
-
-预览服务默认监听：
-
-```text
-http://localhost:4173
-```
+- `index.html`
+- `bg.jpg`
+- `favicon.svg`
+- `js/`
 
 说明：
 
-- `npm run build` 会生成 `dist/`，并对 HTML 与所有 JavaScript 模块做 minify。
-- `dist/` 中会额外生成 `.gz` 与 `.br` 预压缩文件。
-- `npm run preview` 会按浏览器 `Accept-Encoding` 自动返回 Brotli 或 Gzip 压缩内容。
-- 语言资源仍然保持按需动态加载，不会在首屏一次性下载全部语言包。
+- 页面入口就是根目录下的 `index.html`。
+- JavaScript 采用浏览器原生 ES Modules，语言资源仍按需动态加载。
+- 不需要构建产物目录，也不需要在部署平台执行 `npm install` 或 `npm run build`。
 
 ## 部署到 GitHub
 
@@ -64,20 +56,32 @@ http://localhost:4173
 2. 打开仓库 Settings。
 3. 进入 Pages。
 4. 在 Build and deployment 中将 Source 设置为 GitHub Actions。
-5. 保持默认分支为 `main`，推送代码后工作流会自动执行 `npm ci` 和 `npm run build`。
-6. 工作流会将 `dist/` 作为 Pages artifact 自动发布。
+5. 保持默认分支为 `main`，推送代码后工作流会直接整理静态文件并发布。
+6. 工作流不会执行 npm 安装或构建。
 7. 也可以在仓库 Actions 页面手动触发 `Deploy GitHub Pages`。
+
+## 部署到 Cloudflare Pages
+
+这是一个纯静态站点，Cloudflare Pages 中不要再配置 Node 构建。
+
+推荐设置：
+
+- Framework preset: `None`
+- Build command: 留空
+- Build output directory: `/`
+
+如果你之前已经在 Cloudflare 项目里配过 `npm install`、`npm run build`、`wrangler deploy` 或其他构建命令，需要先清空这些旧设置，再重新触发部署。
 
 ## 项目结构
 
 ```text
 .
+├─ .github
+│  └─ workflows
+│     └─ deploy-pages.yml
 ├─ favicon.svg
 ├─ index.html
 ├─ bg.jpg
-├─ scripts
-│  ├─ build.mjs
-│  └─ preview.mjs
 └─ js
    ├─ app.js
    ├─ data
@@ -94,13 +98,11 @@ http://localhost:4173
 - HTML5
 - CSS3
 - 原生 JavaScript ES Modules
-- Node.js 构建脚本
-- esbuild（用于 minify）
+- GitHub Pages 静态发布
 
 ## 说明
 
 - 语录数据与界面文案均保存在仓库内。
 - 默认会根据浏览器语言或 `?lang=` 参数自动选择界面语言，也会记住用户手动切换的语言。
 - 界面文案与语录数据按语言拆分成独立模块，用户进入页面后只会动态加载当前语言对应的资源文件。
-- `dist/` 是发布产物目录，包含 minify 后的模块和对应的 `.gz`、`.br` 压缩文件。
-- 项目适合直接部署到 GitHub Pages、Netlify、Vercel 等静态托管平台。
+- 项目适合直接部署到 GitHub Pages、Cloudflare Pages、Netlify、Vercel 等静态托管平台。
