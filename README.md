@@ -63,9 +63,10 @@ http://localhost:4173
 1. 将项目推送到 GitHub 仓库。
 2. 打开仓库 Settings。
 3. 进入 Pages。
-4. 在 Build and deployment 中选择 Deploy from a branch。
-5. 选择 `main` 分支和 `/ (root)` 目录。
-6. 保存后等待 GitHub Pages 发布完成。
+4. 在 Build and deployment 中将 Source 设置为 GitHub Actions。
+5. 保持默认分支为 `main`，推送代码后工作流会自动执行 `npm ci` 和 `npm run build`。
+6. 工作流会将 `dist/` 作为 Pages artifact 自动发布。
+7. 也可以在仓库 Actions 页面手动触发 `Deploy GitHub Pages`。
 
 ## 项目结构
 
