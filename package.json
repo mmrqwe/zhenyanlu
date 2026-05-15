@@ -1,0 +1,11 @@
+{
+  "name": "zhenyanlu",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/preview.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}

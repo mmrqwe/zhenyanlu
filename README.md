@@ -25,7 +25,7 @@
 
 这是一个原生 HTML + CSS + JavaScript 项目，直接部署为静态站点即可。
 
-推荐使用本地静态服务器运行：
+开发时可直接使用任意静态服务器运行源目录：
 
 ```bash
 python -m http.server 8000
@@ -36,6 +36,27 @@ python -m http.server 8000
 ```text
 http://localhost:8000
 ```
+
+生产发布建议走最小构建流程：
+
+```bash
+npm install
+npm run build
+npm run preview
+```
+
+预览服务默认监听：
+
+```text
+http://localhost:4173
+```
+
+说明：
+
+- `npm run build` 会生成 `dist/`，并对 HTML 与所有 JavaScript 模块做 minify。
+- `dist/` 中会额外生成 `.gz` 与 `.br` 预压缩文件。
+- `npm run preview` 会按浏览器 `Accept-Encoding` 自动返回 Brotli 或 Gzip 压缩内容。
+- 语言资源仍然保持按需动态加载，不会在首屏一次性下载全部语言包。
 
 ## 部署到 GitHub
 
@@ -50,8 +71,12 @@ http://localhost:8000
 
 ```text
 .
+├─ favicon.svg
 ├─ index.html
-├─ bg.png
+├─ bg.jpg
+├─ scripts
+│  ├─ build.mjs
+│  └─ preview.mjs
 └─ js
    ├─ app.js
    ├─ data
@@ -68,9 +93,13 @@ http://localhost:8000
 - HTML5
 - CSS3
 - 原生 JavaScript ES Modules
+- Node.js 构建脚本
+- esbuild（用于 minify）
 
 ## 说明
 
 - 语录数据与界面文案均保存在仓库内。
-- 默认会根据浏览器语言自动选择界面语言，也会记住用户手动切换的语言。
+- 默认会根据浏览器语言或 `?lang=` 参数自动选择界面语言，也会记住用户手动切换的语言。
+- 界面文案与语录数据按语言拆分成独立模块，用户进入页面后只会动态加载当前语言对应的资源文件。
+- `dist/` 是发布产物目录，包含 minify 后的模块和对应的 `.gz`、`.br` 压缩文件。
 - 项目适合直接部署到 GitHub Pages、Netlify、Vercel 等静态托管平台。

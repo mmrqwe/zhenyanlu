@@ -16,6 +16,12 @@ const loadingQuoteLocales = new Map();
 
 let quoteCount = 0;
 
+function hasCompleteQuoteRecords(records) {
+  return Array.isArray(records) && records.length > 0 && records.every(
+    (record) => record && typeof record.q === 'string' && typeof record.s === 'string' && typeof record.e === 'string'
+  );
+}
+
 function normalizeQuoteLocale(localeCode) {
   return QUOTE_LOADERS[localeCode] ? localeCode : DEFAULT_QUOTE_LOCALE;
 }
@@ -49,15 +55,13 @@ async function loadQuoteLocale(localeCode) {
 
 export async function ensureQuoteLocale(localeCode = DEFAULT_QUOTE_LOCALE) {
   const normalized = normalizeQuoteLocale(localeCode);
+  const records = await loadQuoteLocale(normalized);
 
-  if (normalized === DEFAULT_QUOTE_LOCALE) {
-    return loadQuoteLocale(normalized);
+  if (normalized === DEFAULT_QUOTE_LOCALE || hasCompleteQuoteRecords(records)) {
+    return records;
   }
 
-  const [records] = await Promise.all([
-    loadQuoteLocale(normalized),
-    loadQuoteLocale(DEFAULT_QUOTE_LOCALE),
-  ]);
+  await loadQuoteLocale(DEFAULT_QUOTE_LOCALE);
 
   return records;
 }
