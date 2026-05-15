@@ -64,13 +64,21 @@ http://localhost:8000
 
 这是一个纯静态站点，Cloudflare Pages 中不要再配置 Node 构建。
 
+仓库根目录已包含 `wrangler.jsonc`，即使后台暂时还在执行 `npx wrangler deploy`，Wrangler 也会只上传 `dist/`，不会再把仓库根目录和 `node_modules/` 当作静态资源目录。
+
 推荐设置：
 
 - Framework preset: `None`
 - Build command: 留空
-- Build output directory: `/`
+- Build output directory: `dist`
 
-如果你之前已经在 Cloudflare 项目里配过 `npm install`、`npm run build`、`wrangler deploy` 或其他构建命令，需要先清空这些旧设置，再重新触发部署。
+如果你之前已经在 Cloudflare 项目里配过 `npm install`、`npm run build`、`wrangler deploy` 或其他构建命令，建议先清空这些旧设置，再重新触发部署。
+
+说明：
+
+- 现在仓库内的 Cloudflare 部署源是 `dist/`。
+- 如果你只是想让部署恢复成功，保留后台的 `npx wrangler deploy` 也可以。
+- 如果你连构建日志里的 npm / npx 都不想看到，就必须在 Cloudflare 后台把自定义 Deploy command 删掉；这个动作不能通过仓库文件覆盖。
 
 ## 项目结构
 
