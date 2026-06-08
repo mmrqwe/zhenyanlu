@@ -1,1 +1,29 @@
-const t={code:"de",htmlLang:"de",nativeName:"Deutsch",pageTitle:"Mao-Zedong-Zitate \xB7 Kartenzug",heroTitle:"Mao-Zedong-Zitate",heroSubtitle:"Ziehe eine Karte, wenn du Klarheit und Entschlossenheit brauchst",languageLabel:"Sprache",drawAgain:"Noch eine",drawOne:"Ziehen",drawFive:"F\xFCnf ziehen",deckName:"Mao Zedong",deckSeries:"Zitate",footerLoading:"Kartendaten werden geladen\u2026",quoteCount:({count:e})=>`${e} Karten \xB7 Originalzitate und thematische Ausz\xFCge`,explainTitle:"Erl\xE4uterung",tapHint:"Karte antippen, um die Erl\xE4uterung zu sehen",sourceLabel:"Quelle",portraitAlt:"Portr\xE4t",silhouetteAlt:"Schattenportr\xE4t",defaultExplanation:"Dieses Zitat b\xFCndelt Entschlossenheit, Wirklichkeitssinn und Beharrlichkeit. Es ermutigt dazu, Schwierigkeiten ohne R\xFCckzug zu begegnen und Schritt f\xFCr Schritt weiterzugehen.",cardAriaLabel:({quote:e})=>`Erl\xE4uterung \xF6ffnen: ${e}`,historyLabel:"Zuletzt gezogene Karten",historyItemLabel:({quote:e})=>`Verlaufseintrag: ${e}`,closeLabel:"Schlie\xDFen"};var n=t;export{n as default};
+const de = {
+  code: 'de',
+  htmlLang: 'de',
+  nativeName: 'Deutsch',
+  pageTitle: 'Mao-Zedong-Zitate · Kartenzug',
+  heroTitle: 'Mao-Zedong-Zitate',
+  heroSubtitle: 'Ziehe eine Karte, wenn du Klarheit und Entschlossenheit brauchst',
+  languageLabel: 'Sprache',
+  drawAgain: 'Noch eine',
+  drawOne: 'Ziehen',
+  drawFive: 'Fünf ziehen',
+  deckName: 'Mao Zedong',
+  deckSeries: 'Zitate',
+  footerLoading: 'Kartendaten werden geladen…',
+  quoteCount: ({ count }) => `${count} Karten · Originalzitate und thematische Auszüge`,
+  explainTitle: 'Erläuterung',
+  tapHint: 'Karte antippen, um die Erläuterung zu sehen',
+  sourceLabel: 'Quelle',
+  portraitAlt: 'Porträt',
+  silhouetteAlt: 'Schattenporträt',
+  defaultExplanation:
+    'Dieses Zitat bündelt Entschlossenheit, Wirklichkeitssinn und Beharrlichkeit. Es ermutigt dazu, Schwierigkeiten ohne Rückzug zu begegnen und Schritt für Schritt weiterzugehen.',
+  cardAriaLabel: ({ quote }) => `Erläuterung öffnen: ${quote}`,
+  historyLabel: 'Zuletzt gezogene Karten',
+  historyItemLabel: ({ quote }) => `Verlaufseintrag: ${quote}`,
+  closeLabel: 'Schließen',
+};
+
+export default de;

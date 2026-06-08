@@ -1,1 +1,29 @@
-const a={code:"zh-Hant",htmlLang:"zh-Hant",nativeName:"\u7E41\u9AD4\u4E2D\u6587",pageTitle:"\u6BDB\u4E3B\u5E2D\u8A9E\u9304 \xB7 \u62BD\u5361",heroTitle:"\u6BDB \u6FA4 \u6771 \u8A9E \u9304",heroSubtitle:"\u8FF7\u60D8\u6642\uFF0C\u62BD\u4E00\u5F35\u5361\u7247\u6C72\u53D6\u529B\u91CF",languageLabel:"\u8A9E\u8A00",drawAgain:"\u518D\u62BD\u4E00\u5F35",drawOne:"\u62BD \u5361",drawFive:"\u9023\u62BD\u4E94\u5F35",deckName:"\u6BDB\u6FA4\u6771",deckSeries:"\u8A9E\u9304",footerLoading:"\u5361\u7247\u8CC7\u6599\u8F09\u5165\u4E2D\u2026",quoteCount:({count:e})=>`\u5171 ${e} \u5F35\u5361\u7247 \xB7 \u542B\u539F\u6587\u8A9E\u9304\u8207\u4E3B\u984C\u6458\u8FF0`,explainTitle:"\u91CB\u7FA9",tapHint:"\u9EDE\u64CA\u5361\u7247\u67E5\u770B\u91CB\u7FA9",sourceLabel:"\u51FA\u8655",portraitAlt:"\u4EBA\u7269\u7167\u7247",silhouetteAlt:"\u4EBA\u7269\u526A\u5F71",defaultExplanation:"\u9019\u53E5\u8A9E\u9304\u51DD\u805A\u4E86\u6BDB\u6FA4\u6771\u540C\u5FD7\u5728\u9577\u671F\u9769\u547D\u5BE6\u8E10\u4E2D\u7684\u6DF1\u523B\u601D\u8003\u3002\u5B83\u9F13\u52F5\u4EBA\u5011\u5728\u56F0\u5883\u4E2D\u4E0D\u6C23\u9912\u3001\u4E0D\u9000\u7E2E\uFF0C\u5805\u4FE1\u5149\u660E\u7684\u524D\u9014\uFF0C\u6191\u85C9\u5805\u5FCD\u4E0D\u62D4\u7684\u610F\u5FD7\u548C\u5BE6\u4E8B\u6C42\u662F\u7684\u614B\u5EA6\uFF0C\u4E00\u6B65\u6B65\u514B\u670D\u56F0\u96E3\uFF0C\u5BE6\u73FE\u76EE\u6A19\u3002",cardAriaLabel:({quote:e})=>`\u67E5\u770B\u91CB\u7FA9\uFF1A${e}`,historyLabel:"\u6700\u8FD1\u62BD\u5230\u7684\u8A9E\u9304",historyItemLabel:({quote:e})=>`\u6B77\u53F2\u8A18\u9304\uFF1A${e}`,closeLabel:"\u95DC\u9589"};var t=a;export{t as default};
+const zhHant = {
+  code: 'zh-Hant',
+  htmlLang: 'zh-Hant',
+  nativeName: '繁體中文',
+  pageTitle: '毛主席語錄 · 抽卡',
+  heroTitle: '毛 澤 東 語 錄',
+  heroSubtitle: '迷惘時，抽一張卡片汲取力量',
+  languageLabel: '語言',
+  drawAgain: '再抽一張',
+  drawOne: '抽 卡',
+  drawFive: '連抽五張',
+  deckName: '毛澤東',
+  deckSeries: '語錄',
+  footerLoading: '卡片資料載入中…',
+  quoteCount: ({ count }) => `共 ${count} 張卡片 · 含原文語錄與主題摘述`,
+  explainTitle: '釋義',
+  tapHint: '點擊卡片查看釋義',
+  sourceLabel: '出處',
+  portraitAlt: '人物照片',
+  silhouetteAlt: '人物剪影',
+  defaultExplanation:
+    '這句語錄凝聚了毛澤東同志在長期革命實踐中的深刻思考。它鼓勵人們在困境中不氣餒、不退縮，堅信光明的前途，憑藉堅忍不拔的意志和實事求是的態度，一步步克服困難，實現目標。',
+  cardAriaLabel: ({ quote }) => `查看釋義：${quote}`,
+  historyLabel: '最近抽到的語錄',
+  historyItemLabel: ({ quote }) => `歷史記錄：${quote}`,
+  closeLabel: '關閉',
+};
+
+export default zhHant;

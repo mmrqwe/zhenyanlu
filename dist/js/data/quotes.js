@@ -1,1 +1,120 @@
-const s="zh-Hans",m=new Set(["zh-Hans","zh-Hant","ja","ko"]),f={"zh-Hans":()=>import("./quotes/locales/zh-Hans.js"),"zh-Hant":()=>import("./quotes/locales/zh-Hant.js"),en:()=>import("./quotes/locales/en.js"),ja:()=>import("./quotes/locales/ja.js"),ko:()=>import("./quotes/locales/ko.js"),fr:()=>import("./quotes/locales/fr.js"),de:()=>import("./quotes/locales/de.js")},a=new Map,u=new Map;let c=0;function y(e){return Array.isArray(e)&&e.length>0&&e.every(t=>t&&typeof t.q=="string"&&typeof t.s=="string"&&typeof t.e=="string")}function i(e){return f[e]?e:s}async function g(e){const t=i(e);if(a.has(t))return a.get(t);if(!u.has(t)){const n=f[t]().then(o=>{const r=Array.isArray(o.default)?o.default:[];return a.set(t,r),(t===s||c===0)&&(c=r.length),r}).finally(()=>{u.delete(t)});u.set(t,n)}return u.get(t)}async function h(e=s){const t=i(e),n=await g(t);return t===s||y(n)||await g(s),n}function p(e){const t=i(e),n=a.get(t),o=a.get(s)||[];return!Array.isArray(n)||c>0&&n.length!==c?o:n}function A(){return c}function L(e=s){const t=p(e),n=a.get(s)||t;return t.map((o,r)=>({...n[r],...o,index:r}))}function d(e,t){const n=p(e),r=(a.get(s)||n)[t],l=n[t];return!r&&!l?null:{...r,...l,index:t}}function Q(e,t){const n=d(e,t)?.q||"",o=m.has(e)?15:28;return n.length>o?`${n.slice(0,o)}\u2026`:n}export{h as ensureQuoteLocale,d as getQuoteByIndex,A as getQuoteCount,Q as getQuoteSummary,L as getQuotes};
+const DEFAULT_QUOTE_LOCALE = 'zh-Hans';
+const COMPACT_SUMMARY_LOCALES = new Set(['zh-Hans', 'zh-Hant', 'ja', 'ko']);
+
+const QUOTE_LOADERS = {
+  'zh-Hans': () => import('./quotes/locales/zh-Hans.js'),
+  'zh-Hant': () => import('./quotes/locales/zh-Hant.js'),
+  en: () => import('./quotes/locales/en.js'),
+  ja: () => import('./quotes/locales/ja.js'),
+  ko: () => import('./quotes/locales/ko.js'),
+  fr: () => import('./quotes/locales/fr.js'),
+  de: () => import('./quotes/locales/de.js'),
+};
+
+const loadedQuoteLocales = new Map();
+const loadingQuoteLocales = new Map();
+
+let quoteCount = 0;
+
+function hasCompleteQuoteRecords(records) {
+  return Array.isArray(records) && records.length > 0 && records.every(
+    (record) => record && typeof record.q === 'string' && typeof record.s === 'string' && typeof record.e === 'string'
+  );
+}
+
+function normalizeQuoteLocale(localeCode) {
+  return QUOTE_LOADERS[localeCode] ? localeCode : DEFAULT_QUOTE_LOCALE;
+}
+
+async function loadQuoteLocale(localeCode) {
+  const normalized = normalizeQuoteLocale(localeCode);
+
+  if (loadedQuoteLocales.has(normalized)) {
+    return loadedQuoteLocales.get(normalized);
+  }
+
+  if (!loadingQuoteLocales.has(normalized)) {
+    const pending = QUOTE_LOADERS[normalized]()
+      .then((module) => {
+        const records = Array.isArray(module.default) ? module.default : [];
+        loadedQuoteLocales.set(normalized, records);
+        if (normalized === DEFAULT_QUOTE_LOCALE || quoteCount === 0) {
+          quoteCount = records.length;
+        }
+        return records;
+      })
+      .finally(() => {
+        loadingQuoteLocales.delete(normalized);
+      });
+
+    loadingQuoteLocales.set(normalized, pending);
+  }
+
+  return loadingQuoteLocales.get(normalized);
+}
+
+export async function ensureQuoteLocale(localeCode = DEFAULT_QUOTE_LOCALE) {
+  const normalized = normalizeQuoteLocale(localeCode);
+  const records = await loadQuoteLocale(normalized);
+
+  if (normalized === DEFAULT_QUOTE_LOCALE || hasCompleteQuoteRecords(records)) {
+    return records;
+  }
+
+  await loadQuoteLocale(DEFAULT_QUOTE_LOCALE);
+
+  return records;
+}
+
+function getLocaleRecords(localeCode) {
+  const normalized = normalizeQuoteLocale(localeCode);
+  const records = loadedQuoteLocales.get(normalized);
+  const fallbackRecords = loadedQuoteLocales.get(DEFAULT_QUOTE_LOCALE) || [];
+
+  if (!Array.isArray(records)) {
+    return fallbackRecords;
+  }
+
+  if (quoteCount > 0 && records.length !== quoteCount) {
+    return fallbackRecords;
+  }
+
+  return records;
+}
+
+export function getQuoteCount() {
+  return quoteCount;
+}
+
+export function getQuotes(localeCode = DEFAULT_QUOTE_LOCALE) {
+  const records = getLocaleRecords(localeCode);
+  const fallbackRecords = loadedQuoteLocales.get(DEFAULT_QUOTE_LOCALE) || records;
+  return records.map((record, index) => ({
+    ...fallbackRecords[index],
+    ...record,
+    index,
+  }));
+}
+
+export function getQuoteByIndex(localeCode, index) {
+  const records = getLocaleRecords(localeCode);
+  const fallbackRecords = loadedQuoteLocales.get(DEFAULT_QUOTE_LOCALE) || records;
+  const fallback = fallbackRecords[index];
+  const record = records[index];
+
+  if (!fallback && !record) {
+    return null;
+  }
+
+  return {
+    ...fallback,
+    ...record,
+    index,
+  };
+}
+
+export function getQuoteSummary(localeCode, index) {
+  const quote = getQuoteByIndex(localeCode, index)?.q || '';
+  const limit = COMPACT_SUMMARY_LOCALES.has(localeCode) ? 15 : 28;
+  return quote.length > limit ? `${quote.slice(0, limit)}…` : quote;
+}
