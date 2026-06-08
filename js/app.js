@@ -162,6 +162,19 @@ function applyCardDimensions() {
   document.documentElement.style.setProperty('--card-h', `${dimensions.height}px`);
 }
 
+function lockBodyScroll() {
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+  document.documentElement.style.overflow = 'hidden';
+  if (scrollbarWidth > 0) {
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
+  }
+}
+
+function unlockBodyScroll() {
+  document.documentElement.style.overflow = '';
+  document.body.style.paddingRight = '';
+}
+
 function updateStaticDeckText(root = document) {
   root.querySelectorAll('[data-role="deck-name"]').forEach((element) => {
     element.textContent = t('deckName');
@@ -357,8 +370,8 @@ function getViewportSize() {
   const viewport = window.visualViewport;
   const firstPositive = (...values) => values.find((value) => value > 0) || 0;
   const viewportWidth = firstPositive(
-    window.innerWidth || 0,
     document.documentElement.clientWidth,
+    window.innerWidth || 0,
     document.body ? document.body.clientWidth : 0,
     viewport ? Math.round(viewport.width) : 0,
     document.body ? Math.round(document.body.getBoundingClientRect().width) : 0,
@@ -367,8 +380,8 @@ function getViewportSize() {
     screen.width || 0
   );
   const viewportHeight = firstPositive(
-    window.innerHeight || 0,
     document.documentElement.clientHeight,
+    window.innerHeight || 0,
     document.body ? document.body.clientHeight : 0,
     viewport ? Math.round(viewport.height) : 0,
     document.body ? Math.round(document.body.getBoundingClientRect().height) : 0,
@@ -464,6 +477,7 @@ function drawOne() {
 
   busy = true;
   syncActionState();
+  lockBodyScroll();
   const deckRect = ui.deck.getBoundingClientRect();
   const actionRect = ui.mainBtn.getBoundingClientRect();
   const index = pickOne();
@@ -516,6 +530,7 @@ function drawFive() {
 
   busy = true;
   syncActionState();
+  lockBodyScroll();
   const deckRect = ui.deck.getBoundingClientRect();
   const actionRect = ui.mainBtn.getBoundingClientRect();
 
