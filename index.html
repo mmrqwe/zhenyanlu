@@ -76,7 +76,7 @@ main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:
 .draw-btn.small{padding:12px 24px;font-size:14px;letter-spacing:2px}
 
 .drawn-cards{position:fixed;inset:0;pointer-events:none;z-index:10}
-.drawn-cards .dc{position:absolute;width:var(--card-w);height:var(--card-h);perspective:1200px;pointer-events:auto;opacity:0;cursor:pointer;will-change:transform,top,left;outline:none}
+.drawn-cards .dc{position:absolute;width:var(--card-w);height:var(--card-h);perspective:1200px;pointer-events:auto;opacity:0;cursor:pointer;will-change:transform;outline:none}
 .drawn-cards .dc.visible{opacity:1}
 .drawn-cards .dc .ci{position:relative;width:100%;height:100%;transition:transform .9s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
 .drawn-cards .dc.flipped .ci{transform:rotateY(180deg)}

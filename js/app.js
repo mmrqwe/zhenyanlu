@@ -49,6 +49,7 @@ let recentDraws = [];
 let activeQuoteIndex = null;
 let allQuoteIndices = [];
 let localeRequestToken = 0;
+let cachedViewport = { width: 0, height: 0 };
 
 const CARD_DIMENSIONS = {
   default: { width: 280, height: 400 },
@@ -160,19 +161,6 @@ function applyCardDimensions() {
 
   document.documentElement.style.setProperty('--card-w', `${dimensions.width}px`);
   document.documentElement.style.setProperty('--card-h', `${dimensions.height}px`);
-}
-
-function lockBodyScroll() {
-  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-  document.documentElement.style.overflow = 'hidden';
-  if (scrollbarWidth > 0) {
-    document.body.style.paddingRight = `${scrollbarWidth}px`;
-  }
-}
-
-function unlockBodyScroll() {
-  document.documentElement.style.overflow = '';
-  document.body.style.paddingRight = '';
 }
 
 function updateStaticDeckText(root = document) {
@@ -366,63 +354,43 @@ function closeExplain(event) {
   activeQuoteIndex = null;
 }
 
-function getViewportSize() {
-  const viewport = window.visualViewport;
-  const firstPositive = (...values) => values.find((value) => value > 0) || 0;
-  const viewportWidth = firstPositive(
-    document.documentElement.clientWidth,
-    window.innerWidth || 0,
-    document.body ? document.body.clientWidth : 0,
-    viewport ? Math.round(viewport.width) : 0,
-    document.body ? Math.round(document.body.getBoundingClientRect().width) : 0,
-    Math.round(document.documentElement.getBoundingClientRect().width),
-    screen.availWidth || 0,
-    screen.width || 0
-  );
-  const viewportHeight = firstPositive(
-    document.documentElement.clientHeight,
-    window.innerHeight || 0,
-    document.body ? document.body.clientHeight : 0,
-    viewport ? Math.round(viewport.height) : 0,
-    document.body ? Math.round(document.body.getBoundingClientRect().height) : 0,
-    Math.round(document.documentElement.getBoundingClientRect().height),
-    screen.availHeight || 0,
-    screen.height || 0
-  );
-
-  return { viewportWidth, viewportHeight };
+function captureViewport() {
+  cachedViewport.width = document.documentElement.clientWidth || window.innerWidth;
+  cachedViewport.height = document.documentElement.clientHeight || window.innerHeight;
 }
 
 function singleDrawLayout(actionRect) {
   const cardHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-h')) || 400;
-  const { viewportWidth, viewportHeight } = getViewportSize();
-  const compact = viewportWidth < 700;
-  const safeBottom = actionRect ? actionRect.top - (compact ? 30 : 38) : viewportHeight - 24;
+  const vw = cachedViewport.width;
+  const vh = cachedViewport.height;
+  const compact = vw < 700;
+  const safeBottom = actionRect ? actionRect.top - (compact ? 30 : 38) : vh - 24;
   const minCenterY = cardHeight / 2 + (compact ? 26 : 34);
-  const preferredCenterY = viewportHeight * (compact ? 0.43 : 0.45);
+  const preferredCenterY = vh * (compact ? 0.43 : 0.45);
   const centerY = Math.max(minCenterY, Math.min(preferredCenterY, safeBottom - cardHeight / 2));
 
   return {
-    x: viewportWidth / 2,
+    x: vw / 2,
     y: centerY,
   };
 }
 
 function multiDrawLayout(count, deckRect, actionRect) {
-  const { viewportWidth, viewportHeight } = getViewportSize();
+  const vw = cachedViewport.width;
+  const vh = cachedViewport.height;
   const baseWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-w')) || 280;
   const baseHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-h')) || 400;
   const ratio = baseWidth / baseHeight;
-  const compact = viewportWidth < 700;
+  const compact = vw < 700;
   const sidePadding = compact ? 16 : 28;
   const spreadFactor = compact ? 0.28 : 0.42;
-  const maxWidth = viewportWidth - sidePadding * 2;
+  const maxWidth = vw - sidePadding * 2;
   const cardWidth = Math.min(baseWidth, maxWidth / (1 + spreadFactor * (count - 1)));
   const cardHeight = cardWidth / ratio;
   const step = cardWidth * spreadFactor;
-  const centerX = viewportWidth / 2;
-  const preferredCenterY = deckRect ? deckRect.top + deckRect.height * (compact ? 0.28 : 0.3) : viewportHeight * 0.32;
-  const safeBottom = actionRect ? actionRect.top - 18 : viewportHeight - 24;
+  const centerX = vw / 2;
+  const preferredCenterY = deckRect ? deckRect.top + deckRect.height * (compact ? 0.28 : 0.3) : vh * 0.32;
+  const safeBottom = actionRect ? actionRect.top - 18 : vh - 24;
   const edgeDrop = Math.ceil(cardHeight * (compact ? 0.02 : 0.03));
   const centerY = Math.max(cardHeight / 2 + 22, Math.min(preferredCenterY, safeBottom - cardHeight / 2 - edgeDrop));
   const positions = [];
@@ -470,6 +438,24 @@ function commitAnimatedLayout(element, applyFinalState) {
   });
 }
 
+function repositionDrawnCards() {
+  const deckRect = ui.deck.getBoundingClientRect();
+  const centerX = deckRect.left + deckRect.width / 2;
+  const centerY = deckRect.top + deckRect.height / 2;
+  ui.drawnCards.querySelectorAll('.dc').forEach((card) => {
+    if (card.classList.contains('visible')) {
+      card.style.left = `${centerX}px`;
+      card.style.top = `${centerY}px`;
+    }
+  });
+}
+
+function onScrollOrResize() {
+  if (ui.drawnCards.querySelectorAll('.dc.visible').length > 0) {
+    repositionDrawnCards();
+  }
+}
+
 function drawOne() {
   if (busy || localeLoading) {
     return;
@@ -477,7 +463,7 @@ function drawOne() {
 
   busy = true;
   syncActionState();
-  lockBodyScroll();
+  captureViewport();
   const deckRect = ui.deck.getBoundingClientRect();
   const actionRect = ui.mainBtn.getBoundingClientRect();
   const index = pickOne();
@@ -493,8 +479,8 @@ function drawOne() {
 
   const card = buildCard(quote, index);
   card.style.transition = 'none';
-  card.style.top = `${deckRect.top + deckRect.height / 2}px`;
   card.style.left = `${deckRect.left + deckRect.width / 2}px`;
+  card.style.top = `${deckRect.top + deckRect.height / 2}px`;
   card.style.transform = 'translate(-50%,-50%) scale(0.5)';
   ui.drawnCards.appendChild(card);
 
@@ -505,8 +491,8 @@ function drawOne() {
   commitAnimatedLayout(card, () => {
     card.classList.add('visible');
     card.style.transition = 'all .5s cubic-bezier(.25,.46,.45,.94)';
-    card.style.top = `${layout.y}px`;
     card.style.left = `${layout.x}px`;
+    card.style.top = `${layout.y}px`;
     card.style.transform = 'translate(-50%,-50%) scale(1)';
   });
 
@@ -530,7 +516,7 @@ function drawFive() {
 
   busy = true;
   syncActionState();
-  lockBodyScroll();
+  captureViewport();
   const deckRect = ui.deck.getBoundingClientRect();
   const actionRect = ui.mainBtn.getBoundingClientRect();
 
@@ -559,8 +545,8 @@ function drawFive() {
       card.style.height = `${layout[cardIndex].h}px`;
       card.style.zIndex = String(layout[cardIndex].z);
       card.style.transition = 'none';
-      card.style.top = `${deckRect.top + deckRect.height / 2}px`;
       card.style.left = `${deckRect.left + deckRect.width / 2}px`;
+      card.style.top = `${deckRect.top + deckRect.height / 2}px`;
       card.style.transform = 'translate(-50%,-50%) scale(0.4)';
       ui.drawnCards.appendChild(card);
       attachFanCardInteraction(card, layout[cardIndex]);
@@ -569,8 +555,8 @@ function drawFive() {
       commitAnimatedLayout(card, () => {
         card.classList.add('visible');
         card.style.transition = 'all .6s cubic-bezier(.25,.46,.45,.94)';
-        card.style.top = `${layout[cardIndex].y}px`;
         card.style.left = `${layout[cardIndex].x}px`;
+        card.style.top = `${layout[cardIndex].y}px`;
         card.style.transform = fanTransform(layout[cardIndex]);
       });
 
@@ -702,6 +688,9 @@ function wireUi() {
       closeExplain(event);
     }
   });
+
+  window.addEventListener('scroll', onScrollOrResize, { passive: true });
+  window.addEventListener('resize', onScrollOrResize, { passive: true });
 }
 
 async function init() {
